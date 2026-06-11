@@ -11,8 +11,8 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 
-import type { AuthSuccessPayload, PortalUser } from '../lib/clientPortal';
-import { AuthDialog, type AuthTab } from './AuthDialog';
+import type { PortalUser } from '../lib/clientPortal';
+import type { AuthTab } from './AuthDialog';
 
 interface NavChildItem {
   name: string;
@@ -28,7 +28,7 @@ interface NavItem {
 interface NavbarProps {
   user: PortalUser | null;
   isLandingView: boolean;
-  onAuthSuccess: (payload: AuthSuccessPayload) => void;
+  onOpenAuth: (tab: AuthTab) => void;
   onGoHome: () => void;
   onOpenPortal: () => void;
   onOpenChat: () => void;
@@ -67,7 +67,7 @@ function scrollToId(id: string) {
 export function Navbar({
   user,
   isLandingView,
-  onAuthSuccess,
+  onOpenAuth,
   onGoHome,
   onOpenPortal,
   onOpenChat,
@@ -76,15 +76,12 @@ export function Navbar({
   const [isOpen, setIsOpen] = useState(false);
   const [isServicesOpen, setIsServicesOpen] = useState(false);
   const [isDesktopServicesOpen, setIsDesktopServicesOpen] = useState(false);
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [activeAuthTab, setActiveAuthTab] = useState<AuthTab>('login');
 
   const isPortalView = Boolean(user) && !isLandingView;
   const navItems = isPortalView ? portalNavItems : landingNavItems;
 
   function openAuthDialog(tab: AuthTab) {
-    setActiveAuthTab(tab);
-    setIsAuthOpen(true);
+    onOpenAuth(tab);
     setIsOpen(false);
     setIsServicesOpen(false);
     setIsDesktopServicesOpen(false);
@@ -417,14 +414,6 @@ export function Navbar({
         </div>
       </motion.nav>
 
-      {!user && (
-        <AuthDialog
-          open={isAuthOpen}
-          onOpenChange={setIsAuthOpen}
-          initialTab={activeAuthTab}
-          onAuthSuccess={onAuthSuccess}
-        />
-      )}
     </>
   );
 }

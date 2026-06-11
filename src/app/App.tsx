@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { MotionConfig } from 'motion/react';
+import { useLocation, useNavigate } from 'react-router';
 import { toast, Toaster } from 'sonner';
 
 import { Navbar } from './components/Navbar';
@@ -14,6 +15,7 @@ import { ClientChatWidget } from './components/ClientChatWidget';
 import { AdminDashboard } from './components/AdminDashboard';
 import { ScrollToTopButton } from './components/ScrollToTopButton';
 import { SupportChatWidget } from './components/SupportChatWidget';
+import { AuthDialog, type AuthTab } from './components/AuthDialog';
 import type {
   AuthSuccessPayload,
   ComposePortalMessageInput,
@@ -46,8 +48,6 @@ import {
   savePortalStore,
 } from './lib/clientPortal';
 
-type AppViewMode = 'landing' | 'portal';
-
 function getLatestProjectMessageTimestamp(
   messages: PortalMessage[],
   projectId: string,
@@ -72,11 +72,15 @@ function appendUniqueIds(ids: string[] | undefined, nextIds: string[]) {
   return Array.from(new Set([...(ids ?? []), ...nextIds]));
 }
 
+function normalizeRoutePath(pathname: string) {
+  const normalizedPath = pathname.replace(/\/+$/, '');
+  return normalizedPath || '/';
+}
+
 export default function App() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [store, setStore] = useState<PortalStore>(() => loadPortalStore());
-  const [viewMode, setViewMode] = useState<AppViewMode>(() =>
-    loadPortalStore().currentUser ? 'portal' : 'landing',
-  );
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [selectedAdminClientId, setSelectedAdminClientId] = useState<string | null>(null);
   const [selectedAdminProjectId, setSelectedAdminProjectId] = useState<string | null>(null);
@@ -86,7 +90,17 @@ export default function App() {
 
   const currentUser = store.currentUser;
   const currentClientSession = getActiveClientSession(store);
-  const isLandingView = !currentUser || viewMode === 'landing';
+  const routePath = normalizeRoutePath(location.pathname);
+  const isLoginRoute = routePath === '/login';
+  const isRegisterRoute = routePath === '/register';
+  const isAuthRoute = isLoginRoute || isRegisterRoute;
+  const isPortalRoute = routePath === '/portal';
+  const isAdminRoute = routePath === '/admin';
+  const isProtectedRoute = isPortalRoute || isAdminRoute;
+  const authRouteTab: AuthTab = isRegisterRoute ? 'register' : 'login';
+  const shouldShowClientPortal = currentUser?.role === 'client' && isPortalRoute && Boolean(currentClientSession);
+  const shouldShowAdminPortal = currentUser?.role === 'admin' && isAdminRoute;
+  const isLandingView = !shouldShowClientPortal && !shouldShowAdminPortal;
 
   useEffect(() => {
     savePortalStore(store);
@@ -169,9 +183,33 @@ export default function App() {
 
   useEffect(() => {
     if (!currentUser) {
-      setViewMode('landing');
+      if (isProtectedRoute) {
+        navigate('/login', { replace: true });
+      }
+      return;
     }
-  }, [currentUser]);
+
+    if (isAuthRoute) {
+      navigate(currentUser.role === 'admin' ? '/admin' : '/portal', { replace: true });
+      return;
+    }
+
+    if (currentUser.role === 'admin' && isPortalRoute) {
+      navigate('/admin', { replace: true });
+      return;
+    }
+
+    if (currentUser.role === 'client' && isAdminRoute) {
+      navigate('/portal', { replace: true });
+    }
+  }, [
+    currentUser,
+    isAdminRoute,
+    isAuthRoute,
+    isPortalRoute,
+    isProtectedRoute,
+    navigate,
+  ]);
 
   useEffect(() => {
     if (currentUser?.role !== 'client') {
@@ -263,7 +301,7 @@ export default function App() {
       });
     }
 
-    setViewMode('portal');
+    navigate(payload.role === 'admin' ? '/admin' : '/portal');
     setSelectedProjectId(null);
     setSelectedAdminClientId(null);
     setSelectedAdminProjectId(null);
@@ -274,7 +312,7 @@ export default function App() {
 
   function handleLogout() {
     setStore((prev) => clearCurrentUser(prev));
-    setViewMode('landing');
+    navigate('/');
     setSelectedProjectId(null);
     setSelectedAdminClientId(null);
     setSelectedAdminProjectId(null);
@@ -294,7 +332,7 @@ export default function App() {
   function handleClientOpenChat(projectId?: string) {
     if (currentUser?.role !== 'client') return;
 
-    setViewMode('portal');
+    navigate('/portal');
 
     if (projectId) {
       handleClientSelectProject(projectId);
@@ -305,7 +343,7 @@ export default function App() {
 
   function handleTopbarChatAction() {
     if (currentUser?.role === 'admin') {
-      setViewMode('portal');
+      navigate('/admin');
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           document.getElementById('кабинет-чат')?.scrollIntoView({ behavior: 'smooth' });
@@ -318,14 +356,14 @@ export default function App() {
   }
 
   function handleGoHome() {
-    setViewMode('landing');
+    navigate('/');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function handleOpenPortal() {
     if (!currentUser) return;
 
-    setViewMode('portal');
+    navigate(currentUser.role === 'admin' ? '/admin' : '/portal');
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         document.getElementById('кабинет-сводка')?.scrollIntoView({ behavior: 'smooth' });
@@ -488,7 +526,7 @@ export default function App() {
 
     if (!project) return;
 
-    setViewMode('portal');
+    navigate('/portal');
     setSelectedProjectId(project.id);
     setIsChatOpen(false);
 
@@ -501,6 +539,16 @@ export default function App() {
         document.getElementById('кабинет-проекты')?.scrollIntoView({ behavior: 'smooth' });
       });
     });
+  }
+
+  function handleOpenAuth(tab: AuthTab) {
+    navigate(tab === 'register' ? '/register' : '/login');
+  }
+
+  function handleAuthDialogOpenChange(open: boolean) {
+    if (!open && isAuthRoute) {
+      navigate('/');
+    }
   }
 
   function handleClientSendMessage(projectId: string, input: ComposePortalMessageInput) {
@@ -812,14 +860,23 @@ export default function App() {
         <Navbar
           user={currentUser}
           isLandingView={isLandingView}
-          onAuthSuccess={handleAuthSuccess}
+          onOpenAuth={handleOpenAuth}
           onGoHome={handleGoHome}
           onOpenPortal={handleOpenPortal}
           onOpenChat={handleTopbarChatAction}
           onLogout={handleLogout}
         />
 
-        {!isLandingView && currentUser?.role === 'admin' ? (
+        {!currentUser && (
+          <AuthDialog
+            open={isAuthRoute}
+            onOpenChange={handleAuthDialogOpenChange}
+            initialTab={authRouteTab}
+            onAuthSuccess={handleAuthSuccess}
+          />
+        )}
+
+        {shouldShowAdminPortal ? (
           <AdminDashboard
             store={store}
             selectedClientId={selectedAdminClientId}
@@ -835,7 +892,7 @@ export default function App() {
             onDeleteProject={handleAdminDeleteProject}
             onSetProjectCompleted={handleAdminSetProjectCompleted}
           />
-        ) : !isLandingView && currentUser?.role === 'client' && currentClientSession ? (
+        ) : shouldShowClientPortal && currentClientSession ? (
           <>
             <ClientDashboard
               session={currentClientSession}
