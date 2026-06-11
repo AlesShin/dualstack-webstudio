@@ -1,0 +1,10 @@
+node_modules
+dist
+.env*
+!.env.example
+.DS_Store
+dist.tar.gz
+portal-data/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

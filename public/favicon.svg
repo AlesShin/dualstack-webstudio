@@ -1,0 +1,29 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="8" y1="6" x2="56" y2="58" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F172A" />
+      <stop offset="1" stop-color="#020617" />
+    </linearGradient>
+    <linearGradient id="accent-left" x1="15" y1="15" x2="30" y2="49" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A855F7" />
+      <stop offset="1" stop-color="#2563EB" />
+    </linearGradient>
+    <linearGradient id="accent-top" x1="24" y1="15" x2="50" y2="28" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#38BDF8" />
+      <stop offset="1" stop-color="#22D3EE" />
+    </linearGradient>
+    <linearGradient id="accent-bottom" x1="24" y1="36" x2="50" y2="49" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8B5CF6" />
+      <stop offset="1" stop-color="#3B82F6" />
+    </linearGradient>
+  </defs>
+
+  <rect x="4" y="4" width="56" height="56" rx="18" fill="url(#bg)" />
+  <rect x="4.75" y="4.75" width="54.5" height="54.5" rx="17.25" stroke="white" stroke-opacity="0.08" stroke-width="1.5" />
+
+  <rect x="15" y="15" width="13" height="34" rx="6.5" fill="url(#accent-left)" />
+  <rect x="24" y="15" width="25" height="13" rx="6.5" fill="url(#accent-top)" />
+  <rect x="24" y="36" width="25" height="13" rx="6.5" fill="url(#accent-bottom)" />
+
+  <circle cx="48" cy="16" r="4" fill="white" fill-opacity="0.12" />
+</svg>
