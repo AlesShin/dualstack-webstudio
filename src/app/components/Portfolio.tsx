@@ -1,41 +1,91 @@
 import { motion } from 'motion/react';
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, Filter } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
-import { useState } from 'react';
 import { ProjectModal } from './ProjectModal';
 
 const projects = [
   {
     title: 'E-commerce платформа',
     category: 'Интернет-магазин',
-    image: 'https://images.unsplash.com/photo-1622131815526-eaae1e615381?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjB3b3Jrc3BhY2UlMjBkZXNrJTIwbGFwdG9wfGVufDF8fHx8MTc3MjQxODA4OXww&ixlib=rb-4.1.0&q=80&w=1080',
-    gradient: 'from-purple-600 to-blue-600',
-    description: 'Полнофункциональная платформа интернет-магазина с интеграцией платежных систем, системой управления заказами и личным кабинетом пользователя.',
+    image: 'https://images.unsplash.com/photo-1622131815526-eaae1e615381?auto=format&fit=crop&q=80&w=1080',
+    gradient: 'from-cyan-600 to-blue-600',
+    description: 'Полнофункциональная платформа интернет-магазина с каталогом, оплатой, управлением заказами и личным кабинетом покупателя.',
     technologies: ['React', 'Node.js', 'PostgreSQL', 'Stripe'],
     timeline: '4 месяца',
+    result: '+37% к повторным заказам',
+    features: ['Каталог с фильтрами', 'Оплата и статусы заказов', 'Личный кабинет клиента', 'Интеграция с CRM'],
   },
   {
     title: 'Корпоративный сайт',
     category: 'B2B решение',
-    image: 'https://images.unsplash.com/photo-1758691736843-90f58dce465e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjcmVhdGl2ZSUyMHRlYW0lMjBjb2xsYWJvcmF0aW9uJTIwb2ZmaWNlfGVufDF8fHx8MTc3MjQxMDU3NXww&ixlib=rb-4.1.0&q=80&w=1080',
-    gradient: 'from-pink-600 to-orange-600',
-    description: 'Представительский корпоративный сайт с многоязычной поддержкой, системой управления контентом и интеграцией с CRM.',
+    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1080',
+    gradient: 'from-emerald-600 to-cyan-600',
+    description: 'Представительский сайт для B2B-компании: структура услуг, кейсы, лид-формы и база для дальнейшего SEO-продвижения.',
     technologies: ['Next.js', 'TypeScript', 'Sanity CMS', 'Tailwind'],
     timeline: '3 месяца',
+    result: '2.4x рост заявок',
+    features: ['Многостраничная структура', 'CMS для команды', 'SEO-ready архитектура', 'Интеграция с аналитикой'],
   },
   {
     title: 'SaaS приложение',
     category: 'Стартап',
-    image: 'https://images.unsplash.com/photo-1761623135965-6f32e8a916b8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtaW5pbWFsaXN0JTIwd2ViJTIwZGVzaWduJTIwbW9ja3VwfGVufDF8fHx8MTc3MjQyNDQ4MXww&ixlib=rb-4.1.0&q=80&w=1080',
-    gradient: 'from-cyan-600 to-blue-600',
-    description: 'Облачное SaaS-решение для автоматизации бизнес-процессов с системой аналитики, дашбордами и API для интеграций.',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=1080',
+    gradient: 'from-violet-600 to-indigo-600',
+    description: 'Облачное SaaS-решение для автоматизации процессов: дашборды, роли пользователей, уведомления и API для интеграций.',
     technologies: ['React', 'GraphQL', 'AWS', 'MongoDB'],
     timeline: '6 месяцев',
+    result: 'MVP запущен за 12 недель',
+    features: ['Роли и доступы', 'Дашборды KPI', 'REST/GraphQL API', 'Сценарии онбординга'],
+  },
+  {
+    title: 'Landing для сервиса',
+    category: 'Landing page',
+    image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=1080',
+    gradient: 'from-amber-500 to-rose-600',
+    description: 'Продающий лендинг с сильным первым экраном, блоками доверия, тарифами и быстрым захватом заявки.',
+    technologies: ['React', 'Vite', 'Tailwind', 'Motion'],
+    timeline: '18 дней',
+    result: '+52% к конверсии формы',
+    features: ['Продающая структура', 'Адаптивные CTA', 'Быстрая загрузка', 'A/B-ready секции'],
+  },
+  {
+    title: 'Личный кабинет клиента',
+    category: 'Портал',
+    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1080',
+    gradient: 'from-sky-600 to-teal-600',
+    description: 'Кабинет для клиентов студии: проекты, статусы, переписка, заявки на новые услуги и админ-панель для команды.',
+    technologies: ['React', 'TypeScript', 'Local API', 'PHP'],
+    timeline: '5 недель',
+    result: 'все заявки в одном месте',
+    features: ['Проекты и статусы', 'Чат по каждому проекту', 'Админ-панель', 'Сохранение заявок'],
+  },
+  {
+    title: 'Редизайн бренда',
+    category: 'Брендинг',
+    image: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&q=80&w=1080',
+    gradient: 'from-fuchsia-600 to-orange-500',
+    description: 'Обновление визуальной системы, tone of voice и digital-носителей для компании, которой нужен более современный образ.',
+    technologies: ['Brand strategy', 'Figma', 'Design system', 'Guidelines'],
+    timeline: '7 недель',
+    result: 'единый стиль для 12 носителей',
+    features: ['Платформа бренда', 'Айдентика', 'UI-набор', 'Гайдлайн для команды'],
   },
 ];
 
+const filters = ['Все', ...Array.from(new Set(projects.map((project) => project.category)))];
+
 export function Portfolio() {
-  const [selectedProject, setSelectedProject] = useState<typeof projects[0] | null>(null);
+  const [selectedProject, setSelectedProject] = useState<(typeof projects)[0] | null>(null);
+  const [activeFilter, setActiveFilter] = useState('Все');
+
+  const visibleProjects = useMemo(
+    () =>
+      activeFilter === 'Все'
+        ? projects
+        : projects.filter((project) => project.category === activeFilter),
+    [activeFilter],
+  );
 
   return (
     <section id="портфолио" className="relative overflow-hidden bg-gradient-to-b from-black via-gray-950 to-black py-16 sm:py-24 md:py-32 scroll-mt-20">
@@ -45,86 +95,95 @@ export function Portfolio() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12 sm:mb-16 md:mb-20"
+          className="mb-8 flex flex-col gap-5 sm:mb-10 md:mb-12 lg:flex-row lg:items-end lg:justify-between"
         >
-          <h2 className="mb-4 px-2 text-3xl font-bold text-white sm:mb-6 sm:text-4xl md:text-5xl lg:text-6xl">
-            Наши <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">Проекты</span>
-          </h2>
-          <p className="mx-auto max-w-2xl px-2 text-base text-white/60 sm:text-lg md:text-xl">
-            Каждый проект — это история успеха наших клиентов
-          </p>
+          <div className="max-w-3xl">
+            <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-3 py-1.5 text-sm text-white/70">
+              <Filter className="h-4 w-4 text-cyan-300" />
+              Кейсы и результаты
+            </p>
+            <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl md:text-5xl lg:text-6xl">
+              Портфолио, где видна <span className="bg-gradient-to-r from-cyan-300 to-amber-200 bg-clip-text text-transparent">задача бизнеса</span>
+            </h2>
+            <p className="max-w-2xl text-base text-white/62 sm:text-lg md:text-xl">
+              Показываем не только красивые экраны, но и что именно было собрано: структура, функции, сроки и измеримый результат.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {filters.map((filter) => (
+              <button
+                key={filter}
+                type="button"
+                onClick={() => setActiveFilter(filter)}
+                className={`rounded-lg border px-3 py-2 text-sm transition-colors ${
+                  activeFilter === filter
+                    ? 'border-cyan-300/50 bg-cyan-300 text-black'
+                    : 'border-white/12 bg-white/5 text-white/76 hover:border-white/28 hover:text-white'
+                }`}
+              >
+                {filter}
+              </button>
+            ))}
+          </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-          {projects.map((project, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 50 }}
+        <div className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {visibleProjects.map((project, index) => (
+            <motion.article
+              key={project.title}
+              initial={{ opacity: 0, y: 36 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.2 }}
+              transition={{ duration: 0.45, delay: index * 0.06 }}
               onClick={() => setSelectedProject(project)}
-              className="group relative aspect-[4/5] rounded-2xl sm:rounded-3xl overflow-hidden cursor-pointer transform-gpu will-change-transform"
+              className="group relative min-h-[28rem] cursor-pointer overflow-hidden rounded-lg border border-white/10 bg-white/[0.03] transform-gpu will-change-transform"
             >
-              {/* Image */}
               <ImageWithFallback
                 src={project.image}
                 alt={project.title}
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
+              <div className={`absolute inset-0 bg-gradient-to-t ${project.gradient} opacity-70 transition-opacity duration-500 group-hover:opacity-80`} />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-black/10" />
 
-              {/* Gradient overlay */}
-              <div className={`absolute inset-0 bg-gradient-to-t ${project.gradient} opacity-60 group-hover:opacity-80 transition-opacity duration-500`} />
+              <div className="relative flex h-full min-h-[28rem] flex-col justify-between p-5 sm:p-6">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="rounded-full border border-white/18 bg-black/30 px-3 py-1 text-xs text-white/82">
+                    {project.category}
+                  </span>
+                  <span className="rounded-full border border-white/18 bg-white/12 px-3 py-1 text-xs text-white">
+                    {project.result}
+                  </span>
+                </div>
 
-              {/* Content */}
-              <div className="absolute inset-0 p-6 sm:p-8 flex flex-col justify-end">
                 <div>
-                  <p className="text-white/80 text-xs sm:text-sm mb-1 sm:mb-2">{project.category}</p>
-                  <h3 className="mb-3 text-xl font-bold text-white sm:mb-4 sm:text-2xl lg:text-3xl">{project.title}</h3>
-                  
+                  <h3 className="mb-3 text-2xl font-bold text-white sm:text-3xl">{project.title}</h3>
+                  <p className="mb-5 line-clamp-3 text-sm leading-relaxed text-white/76 sm:text-base">
+                    {project.description}
+                  </p>
+
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation();
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation();
                       setSelectedProject(project);
                     }}
-                    className="inline-flex translate-y-0 items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-black opacity-100 transition-[transform,opacity] duration-500 sm:translate-y-4 sm:px-6 sm:py-3 sm:text-base sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100 hover:scale-105 active:scale-95 transform-gpu will-change-transform"
+                    className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition-transform hover:scale-[1.03] active:scale-95"
                   >
                     Смотреть кейс
-                    <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <ExternalLink className="h-4 w-4" />
                   </button>
                 </div>
               </div>
-
-              {/* Border glow effect */}
-              <div className="absolute inset-0 rounded-2xl sm:rounded-3xl ring-2 ring-white/0 group-hover:ring-white/20 transition-[box-shadow] duration-500" />
-            </motion.div>
+            </motion.article>
           ))}
         </div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.8 }}
-          className="mt-12 px-2 text-center sm:mt-16"
-        >
-          <button 
-            onClick={() => {
-              if (projects.length > 0) {
-                setSelectedProject(projects[0]);
-              }
-            }}
-            className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-white/10 md:backdrop-blur-sm text-white rounded-full border border-white/20 hover:bg-white/20 transition-colors duration-300"
-          >
-            Посмотреть все проекты
-          </button>
-        </motion.div>
       </div>
 
-      {/* Project Modal */}
-      <ProjectModal 
-        project={selectedProject} 
-        onClose={() => setSelectedProject(null)} 
+      <ProjectModal
+        project={selectedProject}
+        onClose={() => setSelectedProject(null)}
       />
     </section>
   );

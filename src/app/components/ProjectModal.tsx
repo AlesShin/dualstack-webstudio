@@ -10,6 +10,8 @@ interface Project {
   technologies?: string[];
   timeline?: string;
   link?: string;
+  result?: string;
+  features?: string[];
 }
 
 interface ProjectModalProps {
@@ -80,7 +82,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                 </p>
 
                 {/* Info Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
                   <div className="flex items-start gap-3 p-4 bg-white/5 rounded-xl border border-white/10">
                     <Calendar className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" />
                     <div>
@@ -97,18 +99,25 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                       </p>
                     </div>
                   </div>
+                  <div className="flex items-start gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+                    <ExternalLink className="mt-0.5 h-5 w-5 flex-shrink-0 text-cyan-400" />
+                    <div>
+                      <p className="mb-1 text-sm text-white/60">Результат</p>
+                      <p className="text-white">{project.result || 'Рост заявок и удобства управления'}</p>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Features */}
                 <div className="mb-6">
                   <h3 className="mb-4 text-lg font-bold text-white sm:text-xl">Ключевые особенности</h3>
                   <ul className="space-y-3">
-                    {[
+                    {(project.features || [
                       'Современный адаптивный дизайн',
                       'Высокая производительность и оптимизация',
                       'Интуитивный интерфейс пользователя',
                       'SEO-оптимизация и аналитика',
-                    ].map((feature, index) => (
+                    ]).map((feature, index) => (
                       <li key={index} className="flex items-start gap-3 text-sm text-white/80 sm:text-base">
                         <span className={`w-1.5 h-1.5 rounded-full bg-gradient-to-r ${project.gradient}`} />
                         {feature}
