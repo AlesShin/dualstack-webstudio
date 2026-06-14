@@ -77,6 +77,28 @@ function normalizeRoutePath(pathname: string) {
   return normalizedPath || '/';
 }
 
+function decodeRouteParam(value?: string) {
+  if (!value) return null;
+
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
+function buildClientProjectPath(projectId: string) {
+  return `/portal/projects/${encodeURIComponent(projectId)}`;
+}
+
+function buildAdminClientPath(clientId: string) {
+  return `/admin/clients/${encodeURIComponent(clientId)}`;
+}
+
+function buildAdminProjectPath(clientId: string, projectId: string) {
+  return `${buildAdminClientPath(clientId)}/projects/${encodeURIComponent(projectId)}`;
+}
+
 export default function App() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -94,8 +116,17 @@ export default function App() {
   const isLoginRoute = routePath === '/login';
   const isRegisterRoute = routePath === '/register';
   const isAuthRoute = isLoginRoute || isRegisterRoute;
-  const isPortalRoute = routePath === '/portal';
-  const isAdminRoute = routePath === '/admin';
+  const clientProjectRouteMatch = routePath.match(/^\/portal\/projects\/([^/]+)$/);
+  const adminClientRouteMatch = routePath.match(/^\/admin\/clients\/([^/]+)$/);
+  const adminProjectRouteMatch = routePath.match(/^\/admin\/clients\/([^/]+)\/projects\/([^/]+)$/);
+  const routeProjectId = decodeRouteParam(clientProjectRouteMatch?.[1]);
+  const routeAdminClientId = decodeRouteParam(
+    adminProjectRouteMatch?.[1] ?? adminClientRouteMatch?.[1],
+  );
+  const routeAdminProjectId = decodeRouteParam(adminProjectRouteMatch?.[2]);
+  const isPortalRoute = routePath === '/portal' || Boolean(clientProjectRouteMatch);
+  const isAdminRoute =
+    routePath === '/admin' || Boolean(adminClientRouteMatch) || Boolean(adminProjectRouteMatch);
   const isProtectedRoute = isPortalRoute || isAdminRoute;
   const authRouteTab: AuthTab = isRegisterRoute ? 'register' : 'login';
   const shouldShowClientPortal = currentUser?.role === 'client' && isPortalRoute && Boolean(currentClientSession);
@@ -223,16 +254,60 @@ export default function App() {
       return;
     }
 
+    if (routeProjectId) {
+      const routeProjectExists = activeSession.projects.some((project) => project.id === routeProjectId);
+
+      if (!routeProjectExists) {
+        navigate('/portal', { replace: true });
+        return;
+      }
+
+      if (selectedProjectId !== routeProjectId) {
+        setSelectedProjectId(routeProjectId);
+      }
+      return;
+    }
+
     const projectExists = activeSession.projects.some((project) => project.id === selectedProjectId);
     if (!projectExists) {
       setSelectedProjectId(activeSession.projects[0]?.id ?? null);
     }
-  }, [currentUser?.id, currentUser?.role, selectedProjectId, store]);
+  }, [currentUser?.id, currentUser?.role, navigate, routeProjectId, selectedProjectId, store]);
 
   useEffect(() => {
     if (currentUser?.role !== 'admin') {
       setSelectedAdminClientId(null);
       setSelectedAdminProjectId(null);
+      return;
+    }
+
+    if (routeAdminClientId) {
+      const routeClient = getClientSessionById(store, routeAdminClientId);
+
+      if (!routeClient) {
+        navigate('/admin', { replace: true });
+        return;
+      }
+
+      if (routeAdminProjectId) {
+        const routeProjectExists = routeClient.projects.some(
+          (project) => project.id === routeAdminProjectId,
+        );
+
+        if (!routeProjectExists) {
+          navigate(buildAdminClientPath(routeClient.user.id), { replace: true });
+          return;
+        }
+      }
+
+      if (selectedAdminClientId !== routeClient.user.id) {
+        setSelectedAdminClientId(routeClient.user.id);
+      }
+
+      const nextProjectId = routeAdminProjectId ?? routeClient.projects[0]?.id ?? null;
+      if (selectedAdminProjectId !== nextProjectId) {
+        setSelectedAdminProjectId(nextProjectId);
+      }
       return;
     }
 
@@ -254,7 +329,15 @@ export default function App() {
     if (!projectExists) {
       setSelectedAdminProjectId(selectedClient.projects[0]?.id ?? null);
     }
-  }, [currentUser?.role, selectedAdminClientId, selectedAdminProjectId, store]);
+  }, [
+    currentUser?.role,
+    navigate,
+    routeAdminClientId,
+    routeAdminProjectId,
+    selectedAdminClientId,
+    selectedAdminProjectId,
+    store,
+  ]);
 
   useEffect(() => {
     if (
@@ -323,6 +406,7 @@ export default function App() {
 
   function handleClientSelectProject(projectId: string) {
     setSelectedProjectId(projectId);
+    navigate(buildClientProjectPath(projectId));
 
     if (currentUser?.role === 'client') {
       markClientProjectAsRead(currentUser.id, projectId);
@@ -332,10 +416,10 @@ export default function App() {
   function handleClientOpenChat(projectId?: string) {
     if (currentUser?.role !== 'client') return;
 
-    navigate('/portal');
-
     if (projectId) {
       handleClientSelectProject(projectId);
+    } else {
+      navigate('/portal');
     }
 
     setIsChatOpen(true);
@@ -407,6 +491,7 @@ export default function App() {
     if (!project) return;
 
     setSelectedProjectId(project.id);
+    navigate(buildClientProjectPath(project.id));
     setIsChatOpen(true);
   }
 
@@ -526,7 +611,7 @@ export default function App() {
 
     if (!project) return;
 
-    navigate('/portal');
+    navigate(buildClientProjectPath(project.id));
     setSelectedProjectId(project.id);
     setIsChatOpen(false);
 
@@ -601,11 +686,13 @@ export default function App() {
     const selectedClient = getClientSessionById(store, clientId);
     setSelectedAdminClientId(clientId);
     setSelectedAdminProjectId(selectedClient?.projects[0]?.id ?? null);
+    navigate(buildAdminClientPath(clientId));
   }
 
   function handleAdminSelectProject(clientId: string, projectId: string) {
     setSelectedAdminClientId(clientId);
     setSelectedAdminProjectId(projectId);
+    navigate(buildAdminProjectPath(clientId, projectId));
   }
 
   function handleAdminSendMessage(
@@ -698,6 +785,7 @@ export default function App() {
 
     if (selectedAdminProjectId === projectId) {
       setSelectedAdminProjectId(null);
+      navigate(buildAdminClientPath(clientId));
     }
   }
 
@@ -749,6 +837,7 @@ export default function App() {
 
     setSelectedAdminClientId(clientId);
     setSelectedAdminProjectId(project.id);
+    navigate(buildAdminProjectPath(clientId, project.id));
   }
 
   function handleAdminUpdateClientProfile(
@@ -831,6 +920,7 @@ export default function App() {
     if (selectedAdminClientId === clientId) {
       setSelectedAdminClientId(null);
       setSelectedAdminProjectId(null);
+      navigate('/admin');
     }
   }
 
