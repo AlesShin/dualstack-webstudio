@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
 import { Instagram, Music2, Pin, Send } from 'lucide-react';
+import { PrivacyPolicyDialog } from './PrivacyPolicyDialog';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -100,11 +101,11 @@ export function Footer() {
             © {currentYear} DualStack. Все права защищены.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 text-xs sm:text-sm text-center">
-            <a href="#" className="text-white/40 hover:text-white transition-colors">
+            <PrivacyPolicyDialog triggerClassName="text-white/40 transition-colors hover:text-white">
               Политика конфиденциальности
-            </a>
-            <a href="#" className="text-white/40 hover:text-white transition-colors">
-              Условия использования
+            </PrivacyPolicyDialog>
+            <a href="mailto:info@dualstack.ru" className="text-white/40 hover:text-white transition-colors">
+              Связаться по вопросам данных
             </a>
           </div>
         </div>

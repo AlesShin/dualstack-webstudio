@@ -9,6 +9,7 @@ import {
   CONTACT_TELEGRAM_LINK,
   submitContactSubmission,
 } from '../lib/contact';
+import { PrivacyPolicyDialog } from './PrivacyPolicyDialog';
 const CONTACT_ITEMS = [
   { icon: Mail, title: 'Email', value: CONTACT_EMAIL, link: `mailto:${CONTACT_EMAIL}` },
   { icon: Phone, title: 'Телефон', value: CONTACT_PHONE, link: 'tel:+79162122532', valueClassName: 'whitespace-nowrap' },
@@ -24,6 +25,7 @@ export function Contact() {
     message: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasAcceptedPrivacy, setHasAcceptedPrivacy] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,6 +33,11 @@ export function Contact() {
     // Валидация
     if (!formData.name || !formData.email || !formData.message) {
       toast.error('Пожалуйста, заполните все обязательные поля');
+      return;
+    }
+
+    if (!hasAcceptedPrivacy) {
+      toast.error('Подтвердите согласие на обработку персональных данных');
       return;
     }
 
@@ -44,6 +51,10 @@ export function Contact() {
         message: formData.message,
         subject: 'Новая заявка с сайта DualStack',
         source: 'Контактная форма сайта',
+        details: {
+          privacyConsent: 'Подтверждено',
+          privacyConsentAt: new Date().toISOString(),
+        },
       });
 
       toast.success('Сообщение успешно отправлено!', {
@@ -57,6 +68,7 @@ export function Contact() {
         phone: '',
         message: '',
       });
+      setHasAcceptedPrivacy(false);
     } catch {
       toast.error('Не удалось отправить сообщение', {
         description: `Попробуйте ещё раз или напишите на ${CONTACT_EMAIL}`,
@@ -230,6 +242,25 @@ export function Contact() {
                   required
                   className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg sm:rounded-xl text-sm sm:text-base text-white placeholder:text-white/30 focus:outline-none focus:border-purple-500 transition-colors resize-none"
                 />
+              </div>
+
+              <div className="flex items-start gap-3 text-xs leading-relaxed text-white/60 sm:text-sm">
+                <input
+                  id="privacy-consent"
+                  type="checkbox"
+                  checked={hasAcceptedPrivacy}
+                  onChange={(event) => setHasAcceptedPrivacy(event.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-purple-500"
+                />
+                <span>
+                  <label htmlFor="privacy-consent" className="cursor-pointer">
+                    Я соглашаюсь на обработку персональных данных в соответствии с{' '}
+                  </label>
+                  <PrivacyPolicyDialog triggerClassName="text-left text-cyan-300 underline decoration-cyan-300/40 underline-offset-2 hover:text-cyan-200">
+                    политикой конфиденциальности
+                  </PrivacyPolicyDialog>
+                  .
+                </span>
               </div>
 
               <motion.button
