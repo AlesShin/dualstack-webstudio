@@ -10,9 +10,14 @@ import { serviceCategories, type ServiceCatalogOffer } from '../lib/serviceCatal
 interface ServicesProps {
   canOrderDirectly?: boolean;
   onOrderOffer?: (offer: ServiceCatalogOffer) => void;
+  onRequestOffer?: (offer: ServiceCatalogOffer) => void;
 }
 
-export function Services({ canOrderDirectly = false, onOrderOffer }: ServicesProps) {
+export function Services({
+  canOrderDirectly = false,
+  onOrderOffer,
+  onRequestOffer,
+}: ServicesProps) {
   const [selectedOffer, setSelectedOffer] = useState<ServiceCatalogOffer | null>(null);
 
   return (
@@ -214,6 +219,7 @@ export function Services({ canOrderDirectly = false, onOrderOffer }: ServicesPro
                         return;
                       }
 
+                      onRequestOffer?.(offerToOrder);
                       document.getElementById('контакты')?.scrollIntoView({ behavior: 'smooth' });
                     }}
                     className={`w-full sm:w-auto rounded-xl bg-gradient-to-r ${selectedOffer.color} px-8 py-4 font-medium text-white`}

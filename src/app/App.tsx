@@ -106,6 +106,7 @@ export default function App() {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [selectedAdminClientId, setSelectedAdminClientId] = useState<string | null>(null);
   const [selectedAdminProjectId, setSelectedAdminProjectId] = useState<string | null>(null);
+  const [selectedContactOffer, setSelectedContactOffer] = useState<ServiceCatalogOffer | null>(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isSharedStoreReady, setIsSharedStoreReady] = useState(false);
   const [isSharedStoreAvailable, setIsSharedStoreAvailable] = useState(false);
@@ -1010,9 +1011,13 @@ export default function App() {
             <Services
               canOrderDirectly={currentUser?.role === 'client' && Boolean(currentClientSession)}
               onOrderOffer={handleLandingServiceOrder}
+              onRequestOffer={setSelectedContactOffer}
             />
             <Portfolio />
-            <Contact />
+            <Contact
+              selectedOffer={selectedContactOffer}
+              onClearSelectedOffer={() => setSelectedContactOffer(null)}
+            />
             <SupportChatWidget />
           </>
         )}

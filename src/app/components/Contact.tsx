@@ -9,6 +9,7 @@ import {
   CONTACT_TELEGRAM_LINK,
   submitContactSubmission,
 } from '../lib/contact';
+import type { ServiceCatalogOffer } from '../lib/serviceCatalog';
 import { PrivacyPolicyDialog } from './PrivacyPolicyDialog';
 const CONTACT_ITEMS = [
   { icon: Mail, title: 'Email', value: CONTACT_EMAIL, link: `mailto:${CONTACT_EMAIL}` },
@@ -16,7 +17,12 @@ const CONTACT_ITEMS = [
   { icon: MessageCircle, title: 'Telegram', value: CONTACT_TELEGRAM, link: CONTACT_TELEGRAM_LINK },
 ] as const;
 
-export function Contact() {
+interface ContactProps {
+  selectedOffer?: ServiceCatalogOffer | null;
+  onClearSelectedOffer?: () => void;
+}
+
+export function Contact({ selectedOffer, onClearSelectedOffer }: ContactProps) {
   const prefersReducedMotion = useReducedMotion();
   const [formData, setFormData] = useState({
     name: '',
@@ -52,6 +58,9 @@ export function Contact() {
         subject: 'Новая заявка с сайта DualStack',
         source: 'Контактная форма сайта',
         details: {
+          service: selectedOffer?.title,
+          serviceCategory: selectedOffer?.categoryTitle,
+          servicePrice: selectedOffer?.price,
           privacyConsent: 'Подтверждено',
           privacyConsentAt: new Date().toISOString(),
         },
@@ -69,6 +78,7 @@ export function Contact() {
         message: '',
       });
       setHasAcceptedPrivacy(false);
+      onClearSelectedOffer?.();
     } catch {
       toast.error('Не удалось отправить сообщение', {
         description: `Попробуйте ещё раз или напишите на ${CONTACT_EMAIL}`,
@@ -193,6 +203,25 @@ export function Contact() {
             className="p-6 sm:p-8 bg-white/5 md:backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-white/10"
           >
             <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+              {selectedOffer && (
+                <div className="flex items-start justify-between gap-4 rounded-xl border border-cyan-300/25 bg-cyan-300/8 p-4">
+                  <div>
+                    <p className="text-xs text-cyan-200/70">Выбранная услуга</p>
+                    <p className="mt-1 font-medium text-white">{selectedOffer.title}</p>
+                    <p className="mt-1 text-sm text-white/55">
+                      {selectedOffer.categoryTitle} · {selectedOffer.price}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={onClearSelectedOffer}
+                    className="shrink-0 text-xs text-white/45 transition-colors hover:text-white"
+                  >
+                    Убрать
+                  </button>
+                </div>
+              )}
+
               <div>
                 <label className="block text-white/60 text-xs sm:text-sm mb-2">Ваше имя *</label>
                 <input
