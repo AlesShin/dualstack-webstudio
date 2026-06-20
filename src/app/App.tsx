@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { MotionConfig } from 'motion/react';
 import { useLocation, useNavigate } from 'react-router';
 import { toast, Toaster } from 'sonner';
@@ -10,11 +10,7 @@ import { Portfolio } from './components/Portfolio';
 import { About } from './components/About';
 import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
-import { ClientDashboard } from './components/ClientDashboard';
-import { ClientChatWidget } from './components/ClientChatWidget';
-import { AdminDashboard } from './components/AdminDashboard';
 import { ScrollToTopButton } from './components/ScrollToTopButton';
-import { SupportChatWidget } from './components/SupportChatWidget';
 import { AuthDialog, type AuthTab } from './components/AuthDialog';
 import type {
   AuthSuccessPayload,
@@ -47,6 +43,35 @@ import {
   saveSharedPortalStore,
   savePortalStore,
 } from './lib/clientPortal';
+
+const ClientDashboard = lazy(() =>
+  import('./components/ClientDashboard').then((module) => ({
+    default: module.ClientDashboard,
+  })),
+);
+const ClientChatWidget = lazy(() =>
+  import('./components/ClientChatWidget').then((module) => ({
+    default: module.ClientChatWidget,
+  })),
+);
+const AdminDashboard = lazy(() =>
+  import('./components/AdminDashboard').then((module) => ({
+    default: module.AdminDashboard,
+  })),
+);
+const SupportChatWidget = lazy(() =>
+  import('./components/SupportChatWidget').then((module) => ({
+    default: module.SupportChatWidget,
+  })),
+);
+
+function PageLoadingFallback() {
+  return (
+    <div className="flex min-h-[70vh] items-center justify-center bg-black px-6 text-center text-white/60">
+      Загружаем интерфейс…
+    </div>
+  );
+}
 
 function getLatestProjectMessageTimestamp(
   messages: PortalMessage[],
@@ -967,60 +992,62 @@ export default function App() {
           />
         )}
 
-        {shouldShowAdminPortal ? (
-          <AdminDashboard
-            store={store}
-            selectedClientId={selectedAdminClientId}
-            selectedProjectId={selectedAdminProjectId}
-            onSelectClient={handleAdminSelectClient}
-            onSelectProject={handleAdminSelectProject}
-            onAssignProject={handleAdminAssignProject}
-            onUpdateClientProfile={handleAdminUpdateClientProfile}
-            onDeleteClient={handleAdminDeleteClient}
-            onSendMessage={handleAdminSendMessage}
-            onDeleteMessage={handleAdminDeleteMessage}
-            onEditMessage={handleAdminEditMessage}
-            onDeleteProject={handleAdminDeleteProject}
-            onSetProjectCompleted={handleAdminSetProjectCompleted}
-          />
-        ) : shouldShowClientPortal && currentClientSession ? (
-          <>
-            <ClientDashboard
-              session={currentClientSession}
-              selectedProjectId={selectedProjectId}
-              onSelectProject={handleClientSelectProject}
-              onCreateProject={handleCreateProject}
-              onOpenChat={handleClientOpenChat}
+        <Suspense fallback={<PageLoadingFallback />}>
+          {shouldShowAdminPortal ? (
+            <AdminDashboard
+              store={store}
+              selectedClientId={selectedAdminClientId}
+              selectedProjectId={selectedAdminProjectId}
+              onSelectClient={handleAdminSelectClient}
+              onSelectProject={handleAdminSelectProject}
+              onAssignProject={handleAdminAssignProject}
+              onUpdateClientProfile={handleAdminUpdateClientProfile}
+              onDeleteClient={handleAdminDeleteClient}
+              onSendMessage={handleAdminSendMessage}
+              onDeleteMessage={handleAdminDeleteMessage}
+              onEditMessage={handleAdminEditMessage}
+              onDeleteProject={handleAdminDeleteProject}
+              onSetProjectCompleted={handleAdminSetProjectCompleted}
             />
-            <ClientChatWidget
-              user={currentClientSession.user}
-              projects={currentClientSession.projects}
-              messages={currentClientSession.messages}
-              selectedProjectId={selectedProjectId}
-              isOpen={isChatOpen}
-              onOpenChange={setIsChatOpen}
-              onSelectProject={handleClientSelectProject}
-              onSendMessage={handleClientSendMessage}
-              onDeleteMessage={handleClientDeleteMessage}
-            />
-          </>
-        ) : (
-          <>
-            <Hero />
-            <About />
-            <Services
-              canOrderDirectly={currentUser?.role === 'client' && Boolean(currentClientSession)}
-              onOrderOffer={handleLandingServiceOrder}
-              onRequestOffer={setSelectedContactOffer}
-            />
-            <Portfolio />
-            <Contact
-              selectedOffer={selectedContactOffer}
-              onClearSelectedOffer={() => setSelectedContactOffer(null)}
-            />
-            <SupportChatWidget />
-          </>
-        )}
+          ) : shouldShowClientPortal && currentClientSession ? (
+            <>
+              <ClientDashboard
+                session={currentClientSession}
+                selectedProjectId={selectedProjectId}
+                onSelectProject={handleClientSelectProject}
+                onCreateProject={handleCreateProject}
+                onOpenChat={handleClientOpenChat}
+              />
+              <ClientChatWidget
+                user={currentClientSession.user}
+                projects={currentClientSession.projects}
+                messages={currentClientSession.messages}
+                selectedProjectId={selectedProjectId}
+                isOpen={isChatOpen}
+                onOpenChange={setIsChatOpen}
+                onSelectProject={handleClientSelectProject}
+                onSendMessage={handleClientSendMessage}
+                onDeleteMessage={handleClientDeleteMessage}
+              />
+            </>
+          ) : (
+            <>
+              <Hero />
+              <About />
+              <Services
+                canOrderDirectly={currentUser?.role === 'client' && Boolean(currentClientSession)}
+                onOrderOffer={handleLandingServiceOrder}
+                onRequestOffer={setSelectedContactOffer}
+              />
+              <Portfolio />
+              <Contact
+                selectedOffer={selectedContactOffer}
+                onClearSelectedOffer={() => setSelectedContactOffer(null)}
+              />
+              <SupportChatWidget />
+            </>
+          )}
+        </Suspense>
 
         <Footer />
         <ScrollToTopButton />
