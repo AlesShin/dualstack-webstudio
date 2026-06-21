@@ -8,16 +8,10 @@ import { useState } from 'react';
 import { serviceCategories, type ServiceCatalogOffer } from '../lib/serviceCatalog';
 
 interface ServicesProps {
-  canOrderDirectly?: boolean;
-  onOrderOffer?: (offer: ServiceCatalogOffer) => void;
   onRequestOffer?: (offer: ServiceCatalogOffer) => void;
 }
 
-export function Services({
-  canOrderDirectly = false,
-  onOrderOffer,
-  onRequestOffer,
-}: ServicesProps) {
+export function Services({ onRequestOffer }: ServicesProps) {
   const [selectedOffer, setSelectedOffer] = useState<ServiceCatalogOffer | null>(null);
 
   return (
@@ -202,9 +196,7 @@ export function Services({
                   </div>
 
                   <p className="mb-5 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm leading-relaxed text-white/70">
-                    {canOrderDirectly
-                      ? 'Если вы уже вошли как клиент, заказ сразу появится в вашем кабинете и станет виден администратору.'
-                      : 'Если хотите заказать эту услугу без входа, мы переведём вас к контактной форме для быстрой заявки.'}
+                    Выбранная услуга появится в контактной форме — останется указать ваши данные и кратко описать задачу.
                   </p>
 
                   <motion.button
@@ -213,18 +205,12 @@ export function Services({
                     onClick={() => {
                       const offerToOrder = selectedOffer;
                       setSelectedOffer(null);
-
-                      if (canOrderDirectly && onOrderOffer) {
-                        onOrderOffer(offerToOrder);
-                        return;
-                      }
-
                       onRequestOffer?.(offerToOrder);
                       document.getElementById('контакты')?.scrollIntoView({ behavior: 'smooth' });
                     }}
                     className={`w-full sm:w-auto rounded-xl bg-gradient-to-r ${selectedOffer.color} px-8 py-4 font-medium text-white`}
                   >
-                    {canOrderDirectly ? 'Заказать в кабинет' : 'Заказать'}
+                    Оставить заявку
                   </motion.button>
                 </div>
               </motion.div>

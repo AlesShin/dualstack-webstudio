@@ -16,25 +16,6 @@ SSH_COMMON_OPTS=(
   -o PubkeyAuthentication=no
 )
 
-remote_parent_dir() {
-  dirname "$1"
-}
-
-remote_storage_path() {
-  local remote_path="$1"
-  local remote_base
-  remote_base="$(basename "$remote_path")"
-
-  case "$remote_base" in
-    docs|public|public_html|www|htdocs|httpdocs)
-      printf '%s/portal-data' "$(remote_parent_dir "$remote_path")"
-      ;;
-    *)
-      printf '%s/portal-data' "$remote_path"
-      ;;
-  esac
-}
-
 if [[ "${SKIP_BUILD}" != "1" ]]; then
   echo "Building production files..."
   npm run build:host
@@ -46,11 +27,9 @@ else
   echo "Skipping build. Using existing dist/ contents."
 fi
 
-REMOTE_STORAGE_PATH="${REMOTE_STORAGE_PATH:-$(remote_storage_path "${REMOTE_PATH}")}"
-
 echo "Preparing remote directory: ${REMOTE_PATH}"
 ssh -p "${SSH_PORT}" "${SSH_COMMON_OPTS[@]}" "${USER_NAME}@${HOST}" \
-  "mkdir -p '${REMOTE_PATH}/assets' '${REMOTE_STORAGE_PATH}' && rm -f '${REMOTE_PATH}/index.html' '${REMOTE_PATH}/.htaccess' && rm -rf '${REMOTE_PATH}/assets'/*"
+  "mkdir -p '${REMOTE_PATH}/assets' && rm -f '${REMOTE_PATH}/index.html' '${REMOTE_PATH}/.htaccess' && rm -rf '${REMOTE_PATH}/assets'/* '${REMOTE_PATH}/auth'"
 
 echo "Uploading dist/* to ${USER_NAME}@${HOST}:${REMOTE_PATH}/"
 scp -O -P "${SSH_PORT}" "${SSH_COMMON_OPTS[@]}" -r dist/* "${USER_NAME}@${HOST}:${REMOTE_PATH}/"

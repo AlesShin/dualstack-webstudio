@@ -17,7 +17,7 @@ export function Hero() {
   const prefersReducedMotion = useReducedMotion();
 
   return (
-    <section className="relative flex min-h-[100svh] items-center overflow-hidden bg-black pb-10 pt-24 md:min-h-screen md:pb-14 md:pt-20 lg:pt-24">
+    <section id="top" className="relative flex min-h-[100svh] items-center overflow-hidden bg-black pb-10 pt-24 md:min-h-screen md:pb-14 md:pt-20 lg:pt-24">
       <img
         src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&q=85&w=2200"
         alt=""
