@@ -1,15 +1,15 @@
 import { motion, useReducedMotion } from 'motion/react';
-import { ArrowRight, CheckCircle2, MousePointerClick, ShieldCheck, Sparkles } from 'lucide-react';
+import { ArrowRight, CheckCircle2, MonitorSmartphone, MousePointerClick } from 'lucide-react';
 
 const heroMetrics = [
   { number: '10-21', label: 'дней до первого релиза' },
   { number: '98%', label: 'проектов с адаптивом без переделок' },
-  { number: '24/7', label: 'заявки и поддержка в кабинете' },
+  { number: '24/7', label: 'приём заявок через сайт' },
 ];
 
 const heroBenefits = [
   { icon: MousePointerClick, label: 'Продуманная структура под заявки' },
-  { icon: ShieldCheck, label: 'Личный кабинет клиента и админа' },
+  { icon: MonitorSmartphone, label: 'Адаптивный дизайн для всех устройств' },
   { icon: CheckCircle2, label: 'SEO, аналитика и быстрый запуск' },
 ];
 
@@ -49,8 +49,8 @@ export function Hero() {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="mb-8 max-w-3xl text-base leading-relaxed text-white/78 sm:mb-10 sm:text-lg md:text-xl lg:text-2xl"
         >
-          Проектируем лендинги, корпоративные сайты, интернет-магазины и личные кабинеты:
-          с понятной структурой, заявками, аналитикой и сопровождением после запуска.
+          Проектируем лендинги, корпоративные сайты и интернет-магазины:
+          с понятной структурой, формами заявок, аналитикой и сопровождением после запуска.
         </motion.p>
 
         <motion.div
