@@ -50,15 +50,15 @@ const projects = [
     features: ['Продающая структура', 'Адаптивные CTA', 'Быстрая загрузка', 'A/B-ready секции'],
   },
   {
-    title: 'Личный кабинет клиента',
-    category: 'Портал',
+    title: 'Сайт для образовательного проекта',
+    category: 'Образование',
     image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1080',
     gradient: 'from-sky-600 to-teal-600',
-    description: 'Кабинет для клиентов студии: проекты, статусы, переписка, заявки на новые услуги и админ-панель для команды.',
-    technologies: ['React', 'TypeScript', 'Local API', 'PHP'],
-    timeline: '5 недель',
-    result: 'все заявки в одном месте',
-    features: ['Проекты и статусы', 'Чат по каждому проекту', 'Админ-панель', 'Сохранение заявок'],
+    description: 'Информационный сайт образовательного проекта с программами обучения, преимуществами, отзывами и формой записи на консультацию.',
+    technologies: ['React', 'TypeScript', 'Tailwind', 'Analytics'],
+    timeline: '4 недели',
+    result: '+41% заявок на обучение',
+    features: ['Каталог программ', 'Страницы направлений', 'Отзывы выпускников', 'Форма записи'],
   },
   {
     title: 'Редизайн бренда',
@@ -103,7 +103,7 @@ export function Portfolio() {
               Кейсы и результаты
             </p>
             <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl md:text-5xl lg:text-6xl">
-              Портфолио, где видна <span className="bg-gradient-to-r from-cyan-300 to-amber-200 bg-clip-text text-transparent">задача бизнеса</span>
+              Наши проекты и <span className="bg-gradient-to-r from-cyan-300 to-amber-200 bg-clip-text text-transparent">результаты</span>
             </h2>
             <p className="max-w-2xl text-base text-white/62 sm:text-lg md:text-xl">
               Показываем не только красивые экраны, но и что именно было собрано: структура, функции, сроки и измеримый результат.
