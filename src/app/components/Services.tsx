@@ -15,7 +15,7 @@ export function Services({ onRequestOffer }: ServicesProps) {
   const [selectedOffer, setSelectedOffer] = useState<ServiceCatalogOffer | null>(null);
 
   return (
-    <section id="услуги" className="relative overflow-hidden bg-black py-16 sm:py-24 md:py-32 scroll-mt-20">
+    <section id="услуги" className="relative overflow-hidden bg-black pt-8 pb-16 sm:pt-12 sm:pb-24 md:pt-14 md:pb-32 scroll-mt-20">
       <div className="absolute inset-0 bg-gradient-to-b from-black via-purple-950/20 to-black" />
 
       <div className="content-shell relative z-10">

@@ -3,7 +3,7 @@ import { ArrowRight, CheckCircle2, MonitorSmartphone, MousePointerClick } from '
 
 const heroMetrics = [
   { number: '10-21', label: 'дней до первого релиза' },
-  { number: '98%', label: 'проектов с адаптивом без переделок' },
+  { number: 'Адаптив', label: 'сразу учитываем мобильные устройства' },
   { number: '24/7', label: 'приём заявок через сайт' },
 ];
 

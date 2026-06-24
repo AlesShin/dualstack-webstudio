@@ -76,8 +76,8 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
 
                 <p className="mb-6 text-base leading-relaxed text-white/70 sm:text-lg">
                   {project.description || 
-                    `Этот проект представляет собой современное веб-решение, разработанное с использованием последних технологий. 
-                    Мы создали уникальный дизайн и функциональную платформу, которая помогла клиенту достичь своих бизнес-целей.`
+                    `Этот проект представляет собой современное веб-решение с понятной структурой,
+                    аккуратным интерфейсом и функциональностью под задачи бизнеса.`
                   }
                 </p>
 
@@ -102,8 +102,8 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                   <div className="flex items-start gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
                     <ExternalLink className="mt-0.5 h-5 w-5 flex-shrink-0 text-cyan-400" />
                     <div>
-                      <p className="mb-1 text-sm text-white/60">Результат</p>
-                      <p className="text-white">{project.result || 'Рост заявок и удобства управления'}</p>
+                      <p className="mb-1 text-sm text-white/60">Состав</p>
+                      <p className="text-white">{project.result || 'Понятная структура и удобное управление'}</p>
                     </div>
                   </div>
                 </div>

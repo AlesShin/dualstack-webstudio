@@ -1,20 +1,13 @@
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { Award, Users, Target, TrendingUp, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useState } from 'react';
 
-const stats = [
-  { icon: Award, value: '7+', label: 'Лет опыта' },
-  { icon: Users, value: '50+', label: 'Специалистов' },
-  { icon: Target, value: '500+', label: 'Проектов' },
-  { icon: TrendingUp, value: '98%', label: 'Успешных запусков' },
-];
-
 const aboutNarrative = {
-  eyebrow: 'Digital-партнёр для роста',
+  eyebrow: 'Digital-партнёр для запуска',
   title: 'DualStack помогает бизнесу превращать идеи в сильные digital-решения',
   paragraphs: [
     'Мы не ограничиваемся красивой упаковкой. Для нас каждый проект начинается с понимания бизнеса: что именно нужно усилить, где теряются заявки, как пользователь принимает решение и какой цифровой инструмент действительно даст результат.',
-    'В команде DualStack соединяются стратегия, дизайн, разработка и продвижение. Благодаря этому мы можем не просто собрать сайт или отдельную услугу, а выстроить цельную систему: от первого контакта с брендом до понятного пути клиента и роста конверсии.',
+    'В команде DualStack соединяются стратегия, дизайн, разработка и продвижение. Благодаря этому мы можем не просто собрать сайт или отдельную услугу, а продумать цельную систему: от первого контакта с брендом до понятного пути клиента.',
     'Нам важно, чтобы продукт был не только визуально сильным, но и удобным, быстрым, понятным в поддержке и полезным для бизнеса в долгую. Поэтому мы работаем в диалоге с клиентом, объясняем решения, держим фокус на целях и остаёмся рядом после запуска.',
   ],
   principles: [
@@ -31,7 +24,7 @@ export function About() {
 
   return (
     <>
-      <section id="о-нас" className="relative overflow-hidden bg-gradient-to-b from-black via-purple-950/10 to-black py-16 sm:py-24 md:py-32 scroll-mt-20">
+      <section id="о-нас" className="relative overflow-hidden bg-gradient-to-b from-black via-purple-950/10 to-black pt-16 pb-8 sm:pt-24 sm:pb-12 md:pt-32 md:pb-14 scroll-mt-20">
         <div className="content-shell">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -44,11 +37,11 @@ export function About() {
               О <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Нас</span>
             </h2>
             <p className="mx-auto max-w-3xl px-2 text-base text-white/60 sm:text-lg md:text-xl">
-              Мы - команда профессионалов, создающая цифровые продукты, которые меняют бизнес к лучшему
+              Мы - молодая команда, которая помогает бизнесу запускать понятные цифровые продукты
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 md:gap-16 mb-16 sm:mb-20">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 md:gap-16">
             {/* Text Content */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
@@ -58,15 +51,15 @@ export function About() {
               className="space-y-4 sm:space-y-6"
             >
               <h3 className="text-2xl sm:text-3xl font-bold text-white">
-                Превращаем идеи в успешные digital-продукты
+                Превращаем идеи в понятные digital-продукты
               </h3>
               <p className="text-sm sm:text-base text-white/70 leading-relaxed">
-                С 2018 года мы помогаем бизнесу выходить в онлайн и масштабироваться.
-                Наша команда состоит из опытных дизайнеров, разработчиков и маркетологов,
-                которые знают, как создать продукт, решающий реальные задачи пользователей.
+                Мы молодая команда дизайнеров, разработчиков и маркетологов, которая помогает
+                бизнесу уверенно выходить в онлайн. Создаём сайты, digital-сервисы и системы
+                продвижения, которые решают реальные задачи пользователей и помогают расти.
               </p>
               <p className="text-sm sm:text-base text-white/70 leading-relaxed">
-                Мы не просто делаем сайты - мы создаём инструменты для роста вашего бизнеса.
+                Мы не просто делаем сайты - мы создаём инструменты под задачи вашего бизнеса.
                 Каждый проект для нас уникален, и мы подходим к нему с полной отдачей и
                 вниманием к деталям.
               </p>
@@ -94,10 +87,10 @@ export function About() {
                 <div className="absolute inset-0 bg-gradient-to-br from-purple-600/30 to-blue-600/30 md:backdrop-blur-sm border border-white/10" />
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center p-6 sm:p-8">
-                    <div className="text-5xl sm:text-6xl md:text-7xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent mb-4">
-                      500+
+                    <div className="text-[clamp(2.75rem,10vw,4.75rem)] font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent mb-4">
+                      Digital
                     </div>
-                    <p className="text-lg sm:text-xl text-white/80">Успешных проектов</p>
+                    <p className="text-lg sm:text-xl text-white/80">Решения для бизнеса</p>
                   </div>
                 </div>
                 {/* Decorative elements */}
@@ -127,28 +120,6 @@ export function About() {
             </motion.div>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
-            {stats.map((stat, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -5 }}
-                className="p-6 sm:p-8 bg-white/5 md:backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-white/10 text-center transform-gpu will-change-transform"
-              >
-                <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 rounded-xl sm:rounded-2xl bg-gradient-to-r from-purple-600 to-blue-600 flex items-center justify-center">
-                  <stat.icon className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
-                </div>
-                <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2">
-                  {stat.value}
-                </div>
-                <div className="text-xs sm:text-sm text-white/60">{stat.label}</div>
-              </motion.div>
-            ))}
-          </div>
         </div>
       </section>
 

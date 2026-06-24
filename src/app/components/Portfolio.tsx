@@ -13,7 +13,7 @@ const projects = [
     description: 'Полнофункциональная платформа интернет-магазина с каталогом, оплатой, управлением заказами и личным кабинетом покупателя.',
     technologies: ['React', 'Node.js', 'PostgreSQL', 'Stripe'],
     timeline: '4 месяца',
-    result: '+37% к повторным заказам',
+    result: 'Каталог, корзина и оплата',
     features: ['Каталог с фильтрами', 'Оплата и статусы заказов', 'Личный кабинет клиента', 'Интеграция с CRM'],
   },
   {
@@ -24,7 +24,7 @@ const projects = [
     description: 'Представительский сайт для B2B-компании: структура услуг, кейсы, лид-формы и база для дальнейшего SEO-продвижения.',
     technologies: ['Next.js', 'TypeScript', 'Sanity CMS', 'Tailwind'],
     timeline: '3 месяца',
-    result: '2.4x рост заявок',
+    result: 'Страницы услуг и лид-формы',
     features: ['Многостраничная структура', 'CMS для команды', 'SEO-ready архитектура', 'Интеграция с аналитикой'],
   },
   {
@@ -35,7 +35,7 @@ const projects = [
     description: 'Облачное SaaS-решение для автоматизации процессов: дашборды, роли пользователей, уведомления и API для интеграций.',
     technologies: ['React', 'GraphQL', 'AWS', 'MongoDB'],
     timeline: '6 месяцев',
-    result: 'MVP запущен за 12 недель',
+    result: 'MVP с личным кабинетом',
     features: ['Роли и доступы', 'Дашборды KPI', 'REST/GraphQL API', 'Сценарии онбординга'],
   },
   {
@@ -46,7 +46,7 @@ const projects = [
     description: 'Продающий лендинг с сильным первым экраном, блоками доверия, тарифами и быстрым захватом заявки.',
     technologies: ['React', 'Vite', 'Tailwind', 'Motion'],
     timeline: '18 дней',
-    result: '+52% к конверсии формы',
+    result: 'Структура под заявки',
     features: ['Продающая структура', 'Адаптивные CTA', 'Быстрая загрузка', 'A/B-ready секции'],
   },
   {
@@ -57,7 +57,7 @@ const projects = [
     description: 'Информационный сайт образовательного проекта с программами обучения, преимуществами, отзывами и формой записи на консультацию.',
     technologies: ['React', 'TypeScript', 'Tailwind', 'Analytics'],
     timeline: '4 недели',
-    result: '+41% заявок на обучение',
+    result: 'Программы и форма записи',
     features: ['Каталог программ', 'Страницы направлений', 'Отзывы выпускников', 'Форма записи'],
   },
   {
@@ -100,13 +100,13 @@ export function Portfolio() {
           <div className="max-w-3xl">
             <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-3 py-1.5 text-sm text-white/70">
               <Filter className="h-4 w-4 text-cyan-300" />
-              Кейсы и результаты
+              Направления и решения
             </p>
             <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl md:text-5xl lg:text-6xl">
-              Наши проекты и <span className="bg-gradient-to-r from-cyan-300 to-amber-200 bg-clip-text text-transparent">результаты</span>
+              Примеры <span className="bg-gradient-to-r from-cyan-300 to-amber-200 bg-clip-text text-transparent">решений</span>
             </h2>
             <p className="max-w-2xl text-base text-white/62 sm:text-lg md:text-xl">
-              Показываем не только красивые экраны, но и что именно было собрано: структура, функции, сроки и измеримый результат.
+              Показываем, какие сайты и digital-инструменты можем собрать: структура, функции, сроки и состав работ без лишних обещаний.
             </p>
           </div>
 
@@ -171,7 +171,7 @@ export function Portfolio() {
                     }}
                     className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition-transform hover:scale-[1.03] active:scale-95"
                   >
-                    Смотреть кейс
+                    Смотреть подробнее
                     <ExternalLink className="h-4 w-4" />
                   </button>
                 </div>
