@@ -1,0 +1,25 @@
+name: VPS UDP ingress diagnostic
+on:
+  push:
+    branches: [diagnostics/vpn-ingress-20261107]
+permissions: {}
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Send bounded diagnostic UDP packets to owned VPS
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import socket
+          import time
+          destination = '178.254.177.112'
+          with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+              for attempt in range(6):
+                  for port in (585, 443):
+                      payload = f'SUNDUQ-INGRESS-20261107-{attempt}-{port}'.encode()
+                      sock.sendto(payload, (destination, port))
+                      print(f'Diagnostic datagram sent: UDP {port}, attempt {attempt}', flush=True)
+                  time.sleep(10)
+          PY
